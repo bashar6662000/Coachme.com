@@ -124,13 +124,18 @@ class trainerController extends Controller
         $user_session=session('name');
         $user=User::where('name',$user_session)->first();
         $trainer=trainer::where('name',$user_session)->first();
+        $Courses=$trainer->courses;
+        //dd($Courses);
+
         if($user==null)
         {
             $state='trainer';
             
             return view('DashBoard.Courses')->with('choseen',$trainer)
-                                    ->with('state',$state);
-        }elseif($trainer==null)
+                                            ->with('state',$state)
+                                            ->with('Courses', $Courses);
+        }
+        elseif($trainer==null)
         {
             $state='user';
             return view('DashBoard.Courses')->with('choseen',$user)

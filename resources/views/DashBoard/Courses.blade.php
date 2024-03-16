@@ -64,23 +64,29 @@
       <th>small decsrption</th>
       <th> category</th>
       <th>rate</th>
+      <th>price</th>
       <th>Options</th>
-      <th><Button class="btn btn-info">crate a course</Button></th>
+      <th><a href="/DashBoard/CreateCourse"><Button class="btn btn-info">crate a course</Button></a></th>
     </tr>
     
     <!-- Example data -->
-   
+    @foreach($Courses as $course)
     <tr>
        
-        <td>1</td>
-        <td>php</td>
-        <td>for backend</td>
-        <td>programing</td>
-        <td>90%</td>
-        <td><Button class="btn btn-danger">delete</Button><Button class="btn btn-light">update</Button></td>
+        <td>{{$course->id}}</td>
+     
+        <td>
+          {{$course->name}}
+        </td>
+       
+        <td>{{$course->small_description}}</td>
+        <td>{{$course->category->name}}</td>
+        <td>{{$course->rate}}%</td>
+        <td>{{$course->price}}$</td>
+        <td><a href="/DashBoard/Courses/delete/{{$course->id}}"><Button class="btn btn-danger">delete</Button></a><a href='/DashBoard/update/{{$course->id}}'><Button class="btn btn-light">update</Button></a></td>
         <td></td>
     </tr>
-
+@endforeach
     <!-- Add more rows as needed -->
     
   </table>

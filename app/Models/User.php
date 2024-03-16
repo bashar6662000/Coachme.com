@@ -28,6 +28,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -38,9 +39,22 @@ class User extends Authenticatable
      *
      * @var array<string, string>
      */
+
     protected $casts = [
         'email_verified_at' => 'datetime',
-        /**i stoped hashing here because im using a diffrent method for hashing  */
+
+        /**
+         * i stoped hashing here because im using a diffrent method for hashing 
+         */
+
        // 'password' => 'hashed',
     ];
+    /**
+     * the courses that the user enrolled in 
+     */
+    
+    public function courses()
+    {
+        return $this->belongsToMany(cours::class);
+    }
 }

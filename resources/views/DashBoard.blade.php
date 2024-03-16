@@ -50,7 +50,6 @@
                <li>Couses</li>
                <li>who are we?</li>
                <li>Home</li>
-               <li class="join"><a href="/to_signup">Join now</a></li>
         </ul>
     </nav>
   </header>

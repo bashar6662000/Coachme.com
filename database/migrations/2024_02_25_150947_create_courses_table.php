@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('cours', function (Blueprint $table) {
             $table->increments('id');
             $table->String('name');
+            $table->String('small_description');
             $table->String('description');
             $table->integer('trainer_id');
             $table->integer('rate')->default(1);
             $table->integer('price')->default(1);
+            $table->integer('category_id');
         });
     }
 

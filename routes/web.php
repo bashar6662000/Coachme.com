@@ -18,10 +18,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [App\http\Controllers\CoursController::class,'load_index']);
 Route::get('/Course/{id}',[App\http\Controllers\CoursController::class,'return_Course_info']);
+Route::get('/Course/Enroll-in-cours/{id}',[App\http\Controllers\CoursController::class,'Enroll_in_Course']);
 Route::get('/Delete/{id}',[App\http\Controllers\CoursController::class,'delete_Course']);
 Route::get('/Courses',[App\http\Controllers\CoursController::class,'return_course_data_ToAdmin_page']);
 Route::get('/DashBoard/CreateCourse', [App\http\Controllers\CoursController::class,'return_create_Course']);
 Route::post('/DashBoard/CreateCourse/Create_C', [App\http\Controllers\CoursController::class,'create_Course']);
+Route::get('/DashBoard/Courses/delete/{id}',[App\http\Controllers\CoursController::class,'delete_Course_DashBoard']);
+Route::get('/DashBoard/update/{id}/update-cours',[App\http\Controllers\CoursController::class,'update']);
+Route::get('/DashBoard/update/{id}',[App\http\Controllers\CoursController::class,'return_update_course']);
 
 /**
  *  for user controller
@@ -46,7 +50,10 @@ Route::get('/DashBoard/Upadate/{id}', [App\http\Controllers\trainerController::c
 Route::get('/Trainers', [App\http\Controllers\trainerController::class,'return_trainer_data_ToAdmin_page']);
 Route::get('/Trainers/delete-tariner/{id}', [App\http\Controllers\trainerController::class,'delete']);
 Route::get('/DashBoard/Courses', [App\http\Controllers\trainerController::class,'retirn_courses_Dashboard']);
-
+/**
+ *  for Categorie Controllers
+ */
+Route::get('/Categories',[App\http\Controllers\CategoryController::class,'index']);
 
 /**
  *  for testing purposes
