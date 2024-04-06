@@ -101,14 +101,3 @@ body {
     text-align: center;
   }
   
-
-/* New styles for the Google signup button and social login section */
-.social-login {
-    text-align: center;
-  }
-  small
-  {
-    float: left;
-    color: red;
-    margin-top: -20px;
-  }

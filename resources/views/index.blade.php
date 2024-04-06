@@ -17,7 +17,7 @@
    <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap" rel="stylesheet">
-    <title>Document</title>
+    <title>CoachMe.Com</title>
 </head>
 <body>
    <header>
@@ -33,11 +33,11 @@
                      </div>
                        </div>
                </li>
-               <li>Categorries</li>
               <a href="/Change-state"><li>Become a trainer</li></a> 
                <li>Couses</li>
                <li>who are we?</li>
                <li>Home</li>
+               <a href="/DashBoard"><li> DashBoard </li></a>
                <li class="join" ><a href={{$rout}} >{{$text}}</a></li>
         </ul>
     </nav>
@@ -116,21 +116,20 @@
               <div class="course-bottom">
                 <span class="name"> {{$cours->name}} </span>
                 <br>
-                <span class="categore">category/</span>
+                <span class="categore">category/{{($cours->category->name)}}</span>
                 <br>
+            <span class='price'>  {{$cours->price}}$ </span>
                 
               </div>
                   </a>
+                 
             </div>
-                
+           
            @endforeach
         </div>
     </section>
     <footer>
-
     </footer>
-
-    
 <!--------------->
 </body>
 </html>

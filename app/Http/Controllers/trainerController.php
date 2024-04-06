@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use App\Models\trainer;
 use App\Models\cours;
 use App\Models\user;
@@ -14,11 +15,22 @@ class trainerController extends Controller
     public function user_to_trainer(REQUEST $request)
     {
         $user_session=User::where('name',session('name'))->first();
-        $id=$user_session->id;
+
         $Enterd_name=$request->input('name');
+        $rules = [
+            'name' => 'required|unique:trainers,name'
+        ];
+        
+        $messages = [
+            'name.unique' => 'the name is already taken'
+        ];
+        $request->validate($rules, $messages);
+
         $Enterd_password=$request->input('password');
         $hashed_pass=hash::make($Enterd_password);
         $email=$user_session->email;
+        $id=$user_session->id;
+       
         if($user_session->name==$Enterd_name&&hash::check($Enterd_password,$user_session->password))
         {
             trainer::create(
@@ -28,7 +40,10 @@ class trainerController extends Controller
                     'password' => $hashed_pass
                ]
                );
-               return redirect('/Users/delete-user/'.$id);
+              
+               $user_controller=app(UserController::class);
+               $user_controller->delete($id);
+               return redirect('/DashBoard');
         }else{
             return 'incorrect password or user name';
         }
@@ -48,7 +63,14 @@ class trainerController extends Controller
          * here it we are excluding the user in session
          */
          $user_in_session=user::where('name',session('name'))->first();
-         $id=$user_in_session->id;
+         $trainer_in_session=trainer::where('name',session('name'))->first();
+         if($user_in_session)
+         {
+            $id=$user_in_session->id;
+         } else if($trainer_in_session) {
+            $id=$trainer_in_session->id;
+         }
+        
          /**
           *here we get are all tariners except the one we excluded before
           */
@@ -121,37 +143,49 @@ class trainerController extends Controller
     }
     public function retirn_courses_Dashboard()
     {
-        $user_session=session('name');
-        $user=User::where('name',$user_session)->first();
-        $trainer=trainer::where('name',$user_session)->first();
-        $Courses=$trainer->courses;
-        //dd($Courses);
-
-        if($user==null)
-        {
-            $state='trainer';
-            
-            return view('DashBoard.Courses')->with('choseen',$trainer)
-                                            ->with('state',$state)
-                                            ->with('Courses', $Courses);
-        }
-        elseif($trainer==null)
-        {
-            $state='user';
-            return view('DashBoard.Courses')->with('choseen',$user)
-                                    ->with('state',$state);
-        }
-
+        $trainer=trainer::where('name',session('name'))->first();
+        $courses=$trainer->courses;
+       try
+       {
+        return view('DashBoard/Courses')->with('Courses',$courses)
+                                        ->with('trainer',$trainer);
+       }
+       catch(Exception $e)
+       {
+        
+       } 
     }
-   
     /**
      * test
      */
    public function test()
    {
-    $Courses=trainer::where('id','=',1)->first();
-    return($Courses->courses);
+       $Courses=trainer::where('id','=',1)->first();
+       return($Courses->courses);
    }
 
+   public function trainer_byID($id)
+   {
+       $trainer=trainer::find($id);
+       return $trainer;
+   }
+   public function Quit_course($Course_id,$Trainer_id)
+    {
+        DB::table('trainer_course')
+        ->where('course_id',$Course_id)
+        ->where('trainer_id',$Trainer_id)
+        ->delete();  
+        return redirect()->back();
+    }
+    /**
+     * here
+     */
+    public function Trainer_courses($id)
+    {
+        $trainer=trainer::find($id);
+        $courses=$trainer->courses;
+        return view()->with('trainers',$trainer)
+                     ->with('courses',$courses);
+    }
 }
 

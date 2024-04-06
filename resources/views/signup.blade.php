@@ -14,8 +14,18 @@
       {{  csrf_field()  }}
 
         <input type="text" placeholder="Full Name" required name="name">
+        <small>
+        @if($errors->has('name'))
+        {{  $errors->first('name');}}
+        @endif
+        </small>
         <input type="email" placeholder="Email" required name="email">
         <input type="password" placeholder="Password" required name="password">
+        <small>
+        @if($errors->has('password'))
+        {{  $errors->first('password');}}
+        @endif
+        </small>
         <a href=""><button type="submit">Sign </button></a>
       </form>
       <div class="social-login">

@@ -13,7 +13,18 @@
       <form id="loginForm" action="/Change-state/becomoeTrariner" method='post'>
         @csrf
         <input type="text" placeholder="Username" required name='name'>
+        <small>
+        @if($errors->has('name'))
+        {{ $errors->first('name') }}
+        @endif
+        </small>
+
         <input type="password" placeholder="Password" required name='password'>
+        <small>
+        @if($errors->has('password'))
+       {{ $errors->first('password')}}
+        @endif
+      </small>
         <button type="submit">Becom a trainer</button>
       </form>
       <div class="social-login">

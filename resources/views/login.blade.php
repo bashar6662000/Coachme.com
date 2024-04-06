@@ -12,6 +12,9 @@
       <h1>Couch me  </h1>
       <form id="loginForm" action="/signin/login">
         <input type="text" placeholder="Username" required name='name'>
+        @if($errors->any())
+        {{$errors}}
+        @endif
         <input type="password" placeholder="Password" required name='password'>
         <button type="submit">Login</button>
       </form>

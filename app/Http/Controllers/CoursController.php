@@ -4,51 +4,46 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use App\Models\trainer;
 use App\Models\cours;
 use App\Models\User;
 use App\Models\Category;
+
 class CoursController extends Controller
 {
 
     public function create_Course(REQUEST $request)
     {  
-       if ($request->session()->has('name')) {
+        $trainer=trainer::where('name',session('name'))->first();
+        $name=$request->input('name');
+        $small_description=$request->input('small_description');
+        $description=$request->input('description');
+        $price=$request->input('price');
+        $category_id=$request->input('category');
 
-        $sessionName=session('name');
-        $Trainer_name=trainer::where('name',$sessionName)->first();
+        try{
+            $request->validate([
+                'name' => 'unique:cours,name'
+            ]);
+            
+            $course=  cours::create(
+           [
+            'name'=>$name,
+            'small_description'=>$small_description,
+            'description'=>$description,
+            'price'=>$price,
+            'category_id'=>$category_id
+           ]);
 
-        if($Trainer_name==null){
-            'only trainers can ceate Cours';
-        }
-        else{
+           $trainer->courses()->attach($course->id, ['is_creator' => true]);
+           return redirect('/DashBoard/Courses');
+           }
 
-            $name=$request->input('name');
-            $description=$request->input('description');
-            $small_description = $request->input('small_description');
-            $price=$request->input('price');
-            $id=$Trainer_name->id;
-            $category = $request->input('category');
-        
-            cours::create(
-                [
-                    'name' => $name,
-                    'small_description'=>$small_description,
-                    'description'=>$description,
-                    'trainer_id'=> $id,
-                    'price'=>$price,
-                    'category_id'=> $category
-
-                ]
-            );
-                return redirect('/DashBoard/Courses');
-        }
-
-    }
-
-       else{
-        return "please login first";
-       }
+        catch(Exception $e)
+           {
+              return 'some error ocurred while creating the course';
+           }
     }
 
     public function delete_Course($id)
@@ -103,10 +98,78 @@ class CoursController extends Controller
                             ->with('user',$user_session);
     }
 
-    public function return_Course_info($id)
+    public function return_Course_info($id,REQUEST $request)
     {
         $course=cours::find($id);
-        return view('course_Detail')->with('Course',$course);
+        
+        $user=user::where('name',session('name'))->first();
+       
+        $trainer_controller=app(trainerController::class);
+        $trainer_corse=DB::table('trainer_course')->where('course_id',$course->id)->where('is_creator',true)->first();
+
+        $trainer=$trainer_controller->trainer_byID($trainer_corse->trainer_id);
+        $trainer_session=trainer::where('name',session('name'))->first();
+        $state;
+
+        $currentRoute = $request->url();
+        session(['current_route' => $currentRoute]);
+
+        if(session('name')==null)
+        {
+            $hidden='';
+            $state='user';
+            return view('course_Detail')->with('Course',$course)
+                                        ->with('state',$state)
+                                        ->with('trainer_name',$trainer)
+                                        ->with('hidden',$hidden);
+                                      
+        }
+        else
+        {
+            if($user==null)
+         {
+            if($trainer_corse->trainer_id ==$trainer_session->id)
+            {
+               
+                $hidden='hidden';
+                $state='trainer';
+               
+                return view('course_Detail')->with('Course',$course)
+                                            ->with('state',$state)
+                                            ->with('trainer_name',$trainer)
+                                            ->with('hidden',$hidden);
+            }
+            else if($trainer_corse->trainer_id !=$trainer_session->id)
+            {
+                $hidden='visible';
+                $state='trainer';
+                return view('course_Detail')->with('Course',$course)
+                                            ->with('state',$state)
+                                            ->with('trainer_name',$trainer)
+                                            ->with('hidden',$hidden);
+            }
+            else
+            {
+                $hidden='error';
+                $state='trainer';
+                return view('course_Detail')->with('Course',$course)
+                                            ->with('state',$state)
+                                            ->with('trainer_name',$trainer)
+                                            ->with('hidden',$hidden);
+            } 
+         }
+        else
+         {
+           
+                $hidden='';
+                $state='user';
+                return view('course_Detail')->with('Course',$course)
+                                            ->with('state',$state)
+                                            ->with('trainer_name',$trainer)
+                                            ->with('hidden',$hidden);
+                                           
+         }
+        }
     }
 
     public function return_course_data_ToAdmin_page()
@@ -128,38 +191,81 @@ class CoursController extends Controller
         return redirect('/DashBoard/Courses');
     }
 
-    public function Enroll_in_Course($id)
+ public function user_Enroll_in_Course($id,REQUEST $request)
     {
-        // Find the user by name (assuming 'name' is a column in the users table)
-        $user = User::where('name', session('name'))->first();
+        // Check if thers some is logged in
+        if($request->session()->has('name'))
+        {
+            //find the user who is trying to enroll in the course by name
+            $user=user::where('name',session('name'))->first();
+            //find the course by ID
+            $course = Cours::find($id);
+            //in the follwing if conditions we arc checking if the user is already enrolled in the course
+            if($user&&$course)
+            {
+                $enrollmentExists=DB::table('cours_user')
+                ->where('user_id',$user->id)
+                ->where('cours_id',$course->id)
+                ->exists();
 
-         // Find the course by ID
-         $course = Cours::find($id);
-
-        // Check if the user is already enrolled in the course
-        if ($user && $course) {
-        $enrollmentExists = DB::table('courses_users')
-        ->where('course_id', $course->id)
-        ->where('users_id', $user->id)
-        ->exists();
-
-        if ($enrollmentExists) {
-        // User is already enrolled
-        return "User {$user->name} is already enrolled in course {$course->name}.";
-        } else {
-        // User is not enrolled, proceed with enrollment
-        DB::table('courses_users')->insert([
-            'course_id' => $course->id,
-            'users_id' => $user->id,
-        ]);
-        echo "User {$user->name} has been enrolled in course {$course->name}.";
+                if($enrollmentExists)
+                {
+                    return "User {$user->name} is already enrolled in course {$course->name}.";
+                }
+                else
+                {
+                    DB::table('cours_user')->insert([
+                        'user_id' => $user->id,
+                        'cours_id' => $course->id
+                    ]);
+                    echo "User {$user->name} has been enrolled in course {$course->name}.";
+                }
+            }
+        }
+        else 
+        {   
+             // when try to enroll with no user or trainer logged in :
+            session(['flag_previous' => 1]);
+            $user_controller = app(UserController::class);
+            return $user_controller->Return_signup_page();
+        }
+        
     }
-    } else {
-    return "Please login to enroll in courses.";
-    }
 
-    // Redirect to the course page
-    return redirect('/Course/' . $id);
+    public function Trainer_Enroll_in_Course($id,REQUEST $request)
+    {
+        if($request->session()->has('name'))
+        {
+            //find the user who is trying to enroll in the course by name
+            $trainer=trainer::where('name',session('name'))->first();
+            //find the course by ID
+            $course = Cours::find($id);
+            //in the follwing if conditions we arc checking if the user is already enrolled in the course
+            if($trainer&&$course)
+            {
+                $enrollmentExists=DB::table('trainer_course')
+                ->where('trainer_id',$trainer->id)
+                ->where('course_id',$course->id)
+                ->exists();
+                if($enrollmentExists)
+                {
+                    return "User {$trainer->name} is already enrolled in course {$course->name}.";
+                }
+                else
+                {
+                    DB::table('trainer_course')->insert([
+                        'trainer_id' => $trainer->id,
+                        'course_id' => $course->id,
+                        'is_creator' => false
+                    ]);
+                    echo "User {$trainer->name} has been enrolled in course {$course->name}.";
+                }
+            }
+        }
+        else 
+        {
+            return "please login first to continue";
+        }
     }
 
     public function return_update_course($id)

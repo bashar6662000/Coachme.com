@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{URL::asset('css/Dashboard.css')}}">
+    <link rel="stylesheet" href="{{URL::asset('css/Dashboard-courses.css')}}">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css'>
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -50,25 +50,49 @@
                <li>Couses</li>
                <li>who are we?</li>
                <li>Home</li>
+               
         </ul>
     </nav>
   </header>
-  <section class='Profile'  >
-  <!------------------------------------------------------->
-  <div class="form-style-8">
-  <h2>Update your profile here1</h2>
-  <form action='/DashBoard/Upadate/.{{$choseen->id}}'>
-    <input type="text" name="name" placeholder="new name" />
-    <input type="email" name="email" placeholder="Email" />
-    <input type="password" name="password" placeholder="New password" />
-    <textarea placeholder="bio" onkeyup="adjust_textarea(this)" name="bio"></textarea>
-    <input type="Submit" value="Update my profile" />
-  </form>
-</div>
-  <!------------------------------------------------------>
+
+
+  <section class='courses'>
+  <div class='courses-option'>
+  <table>
+    <tr>
+      <th>#</th>
+      <th>Course name</th>
+      <th>Trainer name</th>
+      <th> rate</th>
+      <th>price</th>
+      <th>options</th>
+      
+    </tr>
+    
+    <!-- Example data -->
+  
+    @foreach ($courses as $course)
+    <tr>
+        <td>{{ $course->id}}</td>
+        <td>{{ $course->name }}</td>
+        <td>{{ $trainer_name->name}}</td>
+        <td>{{ $course->rate }}</td>
+        <td>{{ $course->price }}</td>
+        <td>
+            <a href="/DashBoard/Enrollment/{{$state}}-Quit-Course/{{ $course->id }}/{{ $choseen->id }}">
+                <button class='btn btn-danger'>Quit course</button>
+            </a>
+        </td>
+    </tr>
+@endforeach
+  
+
+    <!-- Add more rows as needed -->
+    
+  </table>
+
+  </div>
 </section>
-
-
 
 <section>
    <div class='side-bar'>
@@ -83,27 +107,23 @@
      <div class='info-state'>
         state: {{$state}}
         <br>
-       <a href="/DashBoard/user-profile/{{$choseen->id}}"><button class='mubutton'> Preview account</button></a> 
+        <button class='mubutton'> Preview account</button>
       </div>
       <div class='side-bar-option'>
         <ol>
           <li>
             profile
           </li>
-          <a href="/DashBoard/Enrollment">
+         
           <li>
            Enrolment
           </li>
-          </a>
           <li>
             Messging
           </li>
-          
-        <a href="/DashBoard/Courses">
-            <li style=visibility:{{$hidden}}>
-            Courses
+          <li>
+            Couses
           </li>
-        </a>
         </ol>
       </div>
  </div>

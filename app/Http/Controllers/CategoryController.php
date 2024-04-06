@@ -15,21 +15,42 @@ class CategoryController extends Controller
         $categories=Category::all();
         return view('Admin.Categories')->with('categories',$categories);
     }
-
-public function Create(REQUEST $request)
+    public function Return_create()
     {
-        $name=$request->input('name');
-        category::create([
-            'name' => $name,
-        ]);
-        return redirect('Admin.Categories');
+        return view('Admin.Create_Categories');
     }
+
+  
+public function create(Request $request)
+{
+    try
+     {
+        // Validate the input 
+        $request->validate([
+            'name' => 'required|unique:categories,name',  # Ensure the name is unique in the "categories" table
+        ]);
+
+        // Create a new category
+        category::create([
+            'name' => $request->input('name'),
+        ]);
+
+        return redirect('/Categories')->with('success', 'Category created successfully');
+    } 
+
+    catch (Exception $e)
+     {
+        // Handle exceptions (e.g., database errors)
+        return redirect('/Categories')->with('error', 'An error occurred while creating the category');
+     }
+}
+
 
     public function delete($id)
     {
-        $record=category::where($id);
+        $record=category::find($id);
         $record->delete();
-        return redirect('Admin.Categories');
+        return redirect()->back();
     }
     
     public function update($id,REQUEST $request)

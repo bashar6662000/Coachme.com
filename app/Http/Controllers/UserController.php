@@ -5,35 +5,49 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
+use App\Rules\ValidCredentials;
 use App\Models\User;
 use App\Models\cours;
 use App\Models\trainer;
 
+
+
 class UserController extends Controller
 {
     /***********Error messgae for deplicated data */
-    public function create_user(REQUEST $request)
-    {
-        $name=$request->input('name');
-        $email=$request->input('email');
-        $password=$request->input('password');
-        $hasehd_password=Hash::make($password);
-        
-        if (User::where('name',$name)->first()==null&&User::where('email',$email)->first()==null&&trainer::where('name',$name)->first()==null&&trainer::where('email',$email)->first()==null)
-        {
-        User::create(
-            [
-                'name'=>$name,
-                'email'=>$email,
-                'password'=>$hasehd_password
-            ]
-            );
-        return redirect('/login');
-        }else
-        {
-            return 'error';
-        } 
-    }
+    public function create_user(Request $request)
+{
+    $name = $request->input('name');
+    $email = $request->input('email');
+    $password = $request->input('password');
+    
+    
+    // Validation for username and password
+    $request->validate([
+        'name' => 'required|unique:users|unique:trainers',
+        'password' => [
+            'required',
+            'min:6',
+            'max:12',
+            'regex:/[A-Z]/',
+            'regex:/[a-z]/',
+            'regex:/[0-9]/', // Require at least one number
+            'regex:/[^A-Za-z0-9]/', // Require at least one special character
+        ],
+    ], [
+        'password.regex' => 'The :attribute must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+    ]);
+
+    $hashed_password = Hash::make($password);
+    User::create([
+        'name' => $name,
+        'email' => $email,
+        'password' => $hashed_password
+    ]);
+    
+    return redirect('/login');
+}
 
     public function Return_signup_page()
     {
@@ -43,27 +57,25 @@ class UserController extends Controller
     /**
      * login section  
      */
-    public function login(REQUEST $request)
-    {   
-        
-        $user_name=$request->input('name');
-        $user_password=$request->input('password');
-        $user=User::where('name',$user_name)->first();
-        $trainer=trainer::where('name',$user_name)->first();
-        if($user!==null&&hash::check($user_password,$user->password))
-        {
-           session(['name'=>$user_name]);
-        }elseif($trainer!==null&&hash::check($user_password,$trainer->password))
-        {
-            session(['name'=>$user_name]);
-        }
-        else{
-            return 'false pass or name';
-        }
-
-       return redirect('/');
-
+    public function login(Request $request)
+{
+    $request->validate
+    ([
+        'name' => ['required'],
+        'password' => ['required',new ValidCredentials]
+    ]);
+    if(session('flag_previous') == 1)
+     {
+        session(['flag_previous' => 0]);
+        return redirect(session('current_route'));
+     }
+    else
+    {
+        return redirect('/');
     }
+    
+    
+}
     public function Return_login_page()
     {
         return view('login');
@@ -92,21 +104,97 @@ class UserController extends Controller
         $user=User::where('name',$user_session)->first();
         $trainer=trainer::where('name',$user_session)->first();
         $hidden;
-        if($user==null)
-        {
-            $state='trainer';
-            $hidden='visible';
-            return view('DashBoard')->with('choseen',$trainer)
-                                    ->with('state',$state)
-                                    ->with('hidden',$hidden);
-        }elseif($trainer==null)
-        {
-            $state='user';
-            $hidden='hidden';
-            return view('DashBoard')->with('choseen',$user)
-                                    ->with('state',$state)
-                                    ->with('hidden',$hidden);
+        if(session('name')!=null)
+        { if($user==null)
+            {
+                $state='trainer';
+                $hidden='visible';
+                return view('DashBoard')->with('choseen',$trainer)
+                                        ->with('state',$state)
+                                        ->with('hidden',$hidden);
+            }elseif($trainer==null)
+            {
+                $state='user';
+                $hidden='hidden';
+                return view('DashBoard')->with('choseen',$user)
+                                        ->with('state',$state)
+                                        ->with('hidden',$hidden);
+            }
         }
-        
+        else
+        {
+            return 'please login first';
+        }
+       
+       
     }
-}
+    
+
+    public function Return_Enrollment()
+    {
+        $user = User::where('name', session('name'))->first();
+
+        $chosen;
+        $state;
+        if ($user)
+        {
+        $chosen = $user;
+        $state = 'user';
+        $trainer_controller=app(trainerController::class);
+
+        $courses_id = DB::table('cours_user')->where('user_id', $user->id)->pluck('cours_id');
+        $courses = Cours::whereIn('id', $courses_id)->get();
+        $trainer=DB::table('trainer_course')->where('is_creator',true)->first();
+        $trainer_name=$trainer_controller->trainer_byID($trainer->trainer_id);
+        return view('DashBoard.Enrollment')->with('courses', $courses)
+                                             ->with('choseen', $chosen)
+                                               ->with('state', $state)
+                                               ->with('user',$user)
+                                               ->with('trainer_name',$trainer_name);
+        }
+        else if(!$user)
+        {
+           
+            $trainer_session=trainer::where('name',session('name'))->first();
+            $chosen = $trainer_session;
+            $state = 'trainer';
+            $trainer_controller=app(trainerController::class);
+    
+            $courses_id = DB::table('trainer_course')->where('trainer_id', $trainer_session->id)->where('is_creator',false)->pluck('course_id');
+            $courses = Cours::whereIn('id', $courses_id)->get();
+            $trainer=DB::table('trainer_course')->where('is_creator',true)->first();
+            $trainer_name=$trainer_controller->trainer_byID($trainer->trainer_id);
+            return view('DashBoard.Enrollment')->with('courses', $courses)
+                                                 ->with('choseen', $chosen)
+                                                   ->with('state', $state)
+                                                   ->with('user',$user)
+                                                   ->with('trainer_name',$trainer_name);
+           
+        }
+
+   }
+    public function Quit_course($Course_id,$User_id)
+    {
+        DB::table('cours_user')
+        ->where('cours_id',$Course_id)
+        ->where('user_id',$User_id)
+        ->delete();  
+        return redirect()->back();
+    }
+    public function user_deatails($id)
+    {
+        $trainer=trainer::find($id);
+        $user=user::find($id);
+        $record;
+        if($trainer)
+        {
+            $record=$trainer;
+            return view('profile')->with('record',$record);
+        }
+        else if($user)
+        {
+            $record=$user;
+            return view('profile')->with('record',$record);
+        }
+    }
+  }

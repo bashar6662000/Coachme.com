@@ -10,12 +10,14 @@ class trainer extends Model
 {
     protected $fillable =['id', 'name','email','password', 'bio','rate'];
     public $timestamps=false;
+   
+    
     /**
-     *  get the Courses for the trainer
+     * get the courses trainer enrolled too
      */
     public function courses()
     {
-        return $this->hasMany(cours::class);
+        return $this->belongsToMany(cours::class, 'trainer_course', 'trainer_id', 'course_id');
     }
     /**
      * this a function i took from stackoverflow.com

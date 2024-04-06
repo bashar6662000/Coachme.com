@@ -80,7 +80,7 @@
         </td>
        
         <td>{{$course->small_description}}</td>
-        <td>{{$course->category->name}}</td>
+       <td>{{$course->category->name}}</td>
         <td>{{$course->rate}}%</td>
         <td>{{$course->price}}$</td>
         <td><a href="/DashBoard/Courses/delete/{{$course->id}}"><Button class="btn btn-danger">delete</Button></a><a href='/DashBoard/update/{{$course->id}}'><Button class="btn btn-light">update</Button></a></td>
@@ -102,10 +102,10 @@
            <img src={{URL::asset('img/GG1.jpg')}} alt="">
          </div>
          <div class='info-name'>
-        Hi,{{$choseen->name}}
+        Hi,{{$trainer->name}}
      </div>
      <div class='info-state'>
-        state: {{$state}}
+        state:trainer
         <br>
         <button class='mubutton'> Preview account</button>
       </div>

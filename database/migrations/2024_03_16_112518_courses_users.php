@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        schema::create('courses_users',function(Blueprint $table)
+        schema::create('cours_user',function(Blueprint $table)
         {
-            $table->integer('course_id');
-            $table->integer('users_id');
+            $table->integer('cours_id');
+            $table->integer('user_id');
         });
     }
 

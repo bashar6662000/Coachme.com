@@ -20,24 +20,22 @@
       <th>#</th>
       <th>name</th>
       <th>options</th>
-      <th><a href=""><Button class="btn btn-info">Add a new category</Button></a></th>
+      <th><a href="/Categories/Create"><Button class="btn btn-info">Add a new category</Button></a></th>
 
     </tr>
     
     <!-- data -->
-  
+  @foreach($categories as $category)
     <tr>
-        <td>1</td>
-        <td>Programin</td>
-        <td><Button class="btn btn-warning">Delete Category</Button></td>
+        <td>{{$category->id}}</td>
+        <td>{{$category->name}}</td>
+       <td> <a href="/Categories/delete/{{$category->id}}"><Button class="btn btn-warning">Delete Category</Button></a></td>
         <td> </td>
-
     </tr>
-    
+    @endforeach
     <!-- i can Add more rows as needed -->
-    
   </table>
-
+  
 </body>
 
 </html>
