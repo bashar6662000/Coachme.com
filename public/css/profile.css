@@ -9,14 +9,20 @@
     font-family:'Raleway';
     border-bottom: none;
     position: fixed;
-    width: 1350px;
+    width: 1380px;
     z-index: 99;
   }
-  nav ul li {
+  .Active
+  {
+    color: black;
+  }
+  nav ul li  {
     list-style: none;
     display: inline-block;
    padding-top: 20px;
    padding-left: 10px;
+   color: white;
+   list-style: none;
     }
   .myspan {
     float: right;
@@ -81,6 +87,7 @@
     width: 150px;
     height: 150px;
     margin-left: 35%;
+    border: 3px solid black;
   }
   .user_name {
      width: 50%;
@@ -95,6 +102,7 @@
     .user_name span {
      text-align: center; /* Center the text within the span */
      width: 100%;
+     font-family: 'Roboto Slab';
     }
     
     .user_name span:hover {
@@ -135,10 +143,15 @@
   {
     padding: 20px;
     margin-left: 10px;
+    color: #fff;
+    
   }
   .Bottom_nav span:hover
   {
     background-color: #6c6c6c;
+    color: #fff;
+    text-decoration:none;
+    list-style: none;
   }
   .second{
     width:48%;

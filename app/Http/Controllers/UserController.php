@@ -10,6 +10,7 @@ use App\Rules\ValidCredentials;
 use App\Models\User;
 use App\Models\cours;
 use App\Models\trainer;
+use App\Models\category;
 
 
 
@@ -40,6 +41,7 @@ class UserController extends Controller
     ]);
 
     $hashed_password = Hash::make($password);
+
     User::create([
         'name' => $name,
         'email' => $email,
@@ -103,6 +105,7 @@ class UserController extends Controller
         $user_session=session('name');
         $user=User::where('name',$user_session)->first();
         $trainer=trainer::where('name',$user_session)->first();
+        $categries=category::all();
         $hidden;
         if(session('name')!=null)
         { if($user==null)
@@ -111,14 +114,16 @@ class UserController extends Controller
                 $hidden='visible';
                 return view('DashBoard')->with('choseen',$trainer)
                                         ->with('state',$state)
-                                        ->with('hidden',$hidden);
+                                        ->with('hidden',$hidden)
+                                        ->with('categries',$categries);
             }elseif($trainer==null)
             {
                 $state='user';
                 $hidden='hidden';
                 return view('DashBoard')->with('choseen',$user)
                                         ->with('state',$state)
-                                        ->with('hidden',$hidden);
+                                        ->with('hidden',$hidden)
+                                        ->with('categries',$categries);
             }
         }
         else
@@ -129,7 +134,6 @@ class UserController extends Controller
        
     }
     
-
     public function Return_Enrollment()
     {
         $user = User::where('name', session('name'))->first();
@@ -185,16 +189,19 @@ class UserController extends Controller
     {
         $trainer=trainer::find($id);
         $user=user::find($id);
+        $categories=category::all();
         $record;
         if($trainer)
         {
             $record=$trainer;
-            return view('profile')->with('record',$record);
+            return view('profile')->with('record',$record)
+                                  ->with('categories',$categories);
         }
         else if($user)
         {
             $record=$user;
-            return view('profile')->with('record',$record);
-        }
+            return view('profile')->with('record',$record)
+                          ->with('categories',$categories);
     }
   }
+}

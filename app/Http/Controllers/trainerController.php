@@ -49,77 +49,29 @@ class trainerController extends Controller
         }
     }
 
-    public function Update(REQUEST $request)
+    public function Change_name(REQUEST $request)
     {
-        /**
-         * so here i take user input
-         */
-        $Enterd_name=$request->input('name');
-        $Enterd_password=$request->input('password');
-        $Enterd_password_hashed=hash::make($Enterd_password);
-        $Enterd_email=$request->input('email');
-        $Enterd_bio=$request->input('bio');
-        /**
-         * here it we are excluding the user in session
-         */
-         $user_in_session=user::where('name',session('name'))->first();
-         $trainer_in_session=trainer::where('name',session('name'))->first();
-         if($user_in_session)
-         {
-            $id=$user_in_session->id;
-         } else if($trainer_in_session) {
-            $id=$trainer_in_session->id;
-         }
-        
-         /**
-          *here we get are all tariners except the one we excluded before
-          */
-         $taken_names_trainer=trainer::whereNotIn('id',[$id])->where('name',$Enterd_name)->first();
-         $taken_E_mails_trainer=trainer::whereNotIn('id',[$id])->where('email',$Enterd_email)->first();
-         /**
-          *here we get are all users except the one we excluded before
-          */
-         $taken_names_user=user::whereNotIn('id',[$id])->where('name',$Enterd_name)->first();
-         $taken_E_mails_user=user::whereNotIn('id',[$id])->where('email',$Enterd_email)->first();
+        $name=$request->input('name');
 
-        if(user::where('name',session('name'))->first()==null)  /**it means the element in session is trainer  */
+        $trainer=trainer::where('name',session('name'))->first();
+        $user=user::where('name',session('name'))->first();
+
+        $validate_name=$request->validate
+        ([
+            'name'=>'required|unique:users|unique:trainers',
+        ]);
+
+        if($trainer)
         {
-           
-
-             if($taken_names_user!=null||$taken_E_mails_user!=null&&$taken_names_trainer!=null||$taken_E_mails_trainer!=null) /**so its make sure the trainer doesnt update his data to an existing data */
-             {
-               return 'User name or E-mail already taken by another user';
-             }
-             else
-             {
-            $trainer_in_session->name=$Enterd_name;
-            $trainer_in_session->password=$Enterd_password_hashed;
-            $trainer_in_session->email=$Enterd_email;
-            $trainer_in_session->bio=$Enterd_bio;
-            session(['name'=>$Enterd_name]);
-            $trainer_in_session->save();
-            return redirect('/DashBoard');
-             }
+            $trainer->name=$name;
+            session(['name'=>$name]);
+            $trainer->save();
         }
-        else if(trainer::where('name',session('name'))->first()==null)  /**it means the element in session is user  */
+        elseif($user)
         {
-
-            if($taken_names_user!=null||$taken_E_mails_user!=null&&$taken_names_trainer!=null||$taken_E_mails_trainer!=null) /**so its make sure the trainer doesnt update his data to an existing data */
-           
-             {
-               return 'User name or E-mail already taken by another user';
-             }
-             else
-             {
-             $user_in_session->name=$Enterd_name;
-             $user_in_session->password=$Enterd_password_hashed;
-             $user_in_session->email=$Enterd_email;
-             session(['name'=>$Enterd_name]);
-             $user_in_session->save();
-             return redirect('/DashBoard');
-             }
-             
-            
+            $user->name=$name;
+            session(['name'=>$name]);
+            $user->save();
         }
     }
 
@@ -180,12 +132,6 @@ class trainerController extends Controller
     /**
      * here
      */
-    public function Trainer_courses($id)
-    {
-        $trainer=trainer::find($id);
-        $courses=$trainer->courses;
-        return view()->with('trainers',$trainer)
-                     ->with('courses',$courses);
-    }
+   
 }
 

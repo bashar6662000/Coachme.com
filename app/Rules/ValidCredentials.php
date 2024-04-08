@@ -11,7 +11,7 @@ use App\Models\Trainer;
 class ValidCredentials implements Rule
 {
     public function passes($attribute, $value)
-{
+    {
     $user = user::where('name',request()->input('name'))->first();
     $trainer = Trainer::where('name', request()->input('name'))->first();
    
@@ -21,7 +21,7 @@ class ValidCredentials implements Rule
         return ('/');
     }
     
-     else if ($trainer && Hash::check($value, $trainer->password)) 
+    else if ($trainer && Hash::check($value, $trainer->password)) 
     {
         session(['name'=>$trainer->name]);
         return ('/');

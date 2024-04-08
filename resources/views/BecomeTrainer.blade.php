@@ -18,7 +18,6 @@
         {{ $errors->first('name') }}
         @endif
         </small>
-
         <input type="password" placeholder="Password" required name='password'>
         <small>
         @if($errors->has('password'))
@@ -27,13 +26,8 @@
       </small>
         <button type="submit">Becom a trainer</button>
       </form>
-      <div class="social-login">
-        <p>Or login with:</p>
-        <button id="googleLoginBtn" class="google-btn">
-          <img src="google-icon.png" alt="Google Icon">Becom a trainer
-        </button>
+      
       </div>
-      <p>Don't have an account? <a href="">Change to trainer</a></p>
     </div>
   </div>
 </body>

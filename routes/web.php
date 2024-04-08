@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
  * for Cours controller  
  */
 
-Route::get('/', [App\http\Controllers\CoursController::class,'load_index']);
+Route::get('/', [App\http\Controllers\CoursController::class,'index']);
 Route::get('/Course/{id}',[App\http\Controllers\CoursController::class,'return_Course_info']);
 Route::get('/Course/user-Enroll-in-cours/{id}',[App\http\Controllers\CoursController::class,'user_Enroll_in_Course']);
 Route::get('/Course/trainer-Enroll-in-cours/{id}',[App\http\Controllers\CoursController::class,'trainer_Enroll_in_Course']);
@@ -27,6 +27,7 @@ Route::post('/DashBoard/CreateCourse/Create_C', [App\http\Controllers\CoursContr
 Route::get('/DashBoard/Courses/delete/{id}',[App\http\Controllers\CoursController::class,'delete_Course_DashBoard']);
 Route::get('/DashBoard/update/{id}/update-cours',[App\http\Controllers\CoursController::class,'update']);
 Route::get('/DashBoard/update/{id}',[App\http\Controllers\CoursController::class,'return_update_course']);
+Route::get('/DashBoard/user-profile/trainer-courses/{id}',[App\http\Controllers\CoursController::class,'Trainer_courses']);
 
 /**
  *  for user controller
@@ -43,14 +44,12 @@ Route::get('/DashBoard', [App\http\Controllers\UserController::class,'Return_Das
 Route::get('/DashBoard/Enrollment', [App\http\Controllers\UserController::class,'Return_Enrollment']);
 Route::get('/DashBoard/Enrollment/user-Quit-Course/{Course_id}/{User_id}',[App\Http\Controllers\UserController::class,'Quit_course']);
 route::get('/DashBoard/user-profile/{id}',[App\Http\Controllers\UserController::class,'user_deatails']);
-
 /**
  *  for trainer controller
  */
-
 Route::get('/Change-state',[App\http\Controllers\trainerController::class,'Return_ChangeState']);
 Route::post('/Change-state/becomoeTrariner', [App\http\Controllers\trainerController::class,'user_to_trainer']);
-Route::get('/DashBoard/Upadate/{id}', [App\http\Controllers\trainerController::class,'Update']);
+Route::get('/DashBoard/change-name/{id}', [App\http\Controllers\trainerController::class,'Change_name']);
 Route::get('/Trainers', [App\http\Controllers\trainerController::class,'return_trainer_data_ToAdmin_page']);
 Route::get('/Trainers/delete-tariner/{id}', [App\http\Controllers\trainerController::class,'delete']);
 Route::get('/DashBoard/Courses', [App\http\Controllers\trainerController::class,'retirn_courses_Dashboard']);

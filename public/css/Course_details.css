@@ -12,12 +12,18 @@ header{
   width: 1350px;
   z-index: 99;
 }
+.Active
+{
+  color: black;
+}
 nav ul li {
   list-style: none;
   display: inline-block;
  padding-top: 20px;
  padding-left: 10px;
+ color: white;
   }
+  
 .myspan {
   float: right;
  
@@ -25,6 +31,8 @@ nav ul li {
 nav ul li:hover {
   color: #01427a;
   cursor: pointer;
+  text-decoration: none;
+  
 }
 
 .join {

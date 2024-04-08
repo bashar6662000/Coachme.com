@@ -77,10 +77,11 @@ class CoursController extends Controller
 
     }
 
-    public function load_index(REQUEST $request)
+    public function index(REQUEST $request)
     {
         $user_session=user::where('name',session('name'))->first();
         $courses=cours::all();
+        $categories=category::all();
         if($request->session()->has('name'))
         {
            $text='logout';
@@ -95,13 +96,14 @@ class CoursController extends Controller
         return view('index')->with('courses',$courses)
                             ->with('text',$text)
                              ->with('rout',$rout)
-                            ->with('user',$user_session);
+                            ->with('user',$user_session)
+                            ->with('categories',$categories);
     }
 
     public function return_Course_info($id,REQUEST $request)
     {
         $course=cours::find($id);
-        
+        $categories=category::all();
         $user=user::where('name',session('name'))->first();
        
         $trainer_controller=app(trainerController::class);
@@ -121,7 +123,8 @@ class CoursController extends Controller
             return view('course_Detail')->with('Course',$course)
                                         ->with('state',$state)
                                         ->with('trainer_name',$trainer)
-                                        ->with('hidden',$hidden);
+                                        ->with('hidden',$hidden)
+                                        ->with('categories',$categories);
                                       
         }
         else
@@ -137,7 +140,8 @@ class CoursController extends Controller
                 return view('course_Detail')->with('Course',$course)
                                             ->with('state',$state)
                                             ->with('trainer_name',$trainer)
-                                            ->with('hidden',$hidden);
+                                            ->with('hidden',$hidden)
+                                            ->with('categories',$categories);
             }
             else if($trainer_corse->trainer_id !=$trainer_session->id)
             {
@@ -146,7 +150,8 @@ class CoursController extends Controller
                 return view('course_Detail')->with('Course',$course)
                                             ->with('state',$state)
                                             ->with('trainer_name',$trainer)
-                                            ->with('hidden',$hidden);
+                                            ->with('hidden',$hidden)
+                                            ->with('categories',$categories);
             }
             else
             {
@@ -155,7 +160,8 @@ class CoursController extends Controller
                 return view('course_Detail')->with('Course',$course)
                                             ->with('state',$state)
                                             ->with('trainer_name',$trainer)
-                                            ->with('hidden',$hidden);
+                                            ->with('hidden',$hidden)
+                                            ->with('categories',$categories);
             } 
          }
         else
@@ -166,7 +172,8 @@ class CoursController extends Controller
                 return view('course_Detail')->with('Course',$course)
                                             ->with('state',$state)
                                             ->with('trainer_name',$trainer)
-                                            ->with('hidden',$hidden);
+                                            ->with('hidden',$hidden)
+                                            ->with('categories',$categories);
                                            
          }
         }
@@ -296,4 +303,16 @@ public function update(REQUEST $request ,$id)
     $Cours->save();
     return redirect('/DashBoard/Courses');
 }
+   public function Trainer_courses($id)
+   {
+
+       $trainer=trainer::findOrFail($id);
+       $trainer_name=$trainer->name;
+       $courses=$trainer->courses;
+      
+        return view('trainer_courses')->with('courses',$courses)
+                                     ->with('name',$trainer_name);
+       
+       
+   }
 }
