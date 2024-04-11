@@ -42,7 +42,7 @@
                 <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
                 <ul class="dropdown-menu">
                     @foreach($categories as $category)
-                    <a href=""><li class='Active'>{{$category->name}}</li></a>
+                    <a href="/Courses-by-category/{{$category->id}}"><li class='Active'>{{$category->name}}</li></a>
                     @endforeach
                 </ul>
             </li>

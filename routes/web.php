@@ -17,9 +17,11 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::get('/', [App\http\Controllers\CoursController::class,'index']);
+Route::get('/search', [App\http\Controllers\CoursController::class,'search']);
+Route::get('/Courses-by-category/{id}', [App\http\Controllers\CoursController::class,'Courese_by_category']);
 Route::get('/Course/{id}',[App\http\Controllers\CoursController::class,'return_Course_info']);
-Route::get('/Course/user-Enroll-in-cours/{id}',[App\http\Controllers\CoursController::class,'user_Enroll_in_Course']);
-Route::get('/Course/trainer-Enroll-in-cours/{id}',[App\http\Controllers\CoursController::class,'trainer_Enroll_in_Course']);
+Route::get('/Course/user-Enroll-in-course/{id}',[App\http\Controllers\CoursController::class,'user_Enroll_in_Course']);
+Route::get('/Course/trainer-Enroll-in-course/{id}',[App\http\Controllers\CoursController::class,'trainer_Enroll_in_Course']);
 Route::get('/Delete/{id}',[App\http\Controllers\CoursController::class,'delete_Course']);
 Route::get('/Courses',[App\http\Controllers\CoursController::class,'return_course_data_ToAdmin_page']);
 Route::get('/DashBoard/CreateCourse', [App\http\Controllers\CoursController::class,'return_create_Course']);

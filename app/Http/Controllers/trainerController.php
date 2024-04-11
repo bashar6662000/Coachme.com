@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\trainer;
 use App\Models\cours;
 use App\Models\user;
-
+use App\Models\category;
 class trainerController extends Controller
 {
 
@@ -60,18 +60,20 @@ class trainerController extends Controller
         ([
             'name'=>'required|unique:users|unique:trainers',
         ]);
-
+        
         if($trainer)
         {
             $trainer->name=$name;
             session(['name'=>$name]);
             $trainer->save();
+            return redirect()->back();
         }
         elseif($user)
         {
             $user->name=$name;
             session(['name'=>$name]);
             $user->save();
+            return redirect()->back();
         }
     }
 
@@ -97,10 +99,12 @@ class trainerController extends Controller
     {
         $trainer=trainer::where('name',session('name'))->first();
         $courses=$trainer->courses;
+        $categories=category::all();
        try
        {
         return view('DashBoard/Courses')->with('Courses',$courses)
-                                        ->with('trainer',$trainer);
+                                        ->with('trainer',$trainer)
+                                        ->with('categories',$categories);
        }
        catch(Exception $e)
        {

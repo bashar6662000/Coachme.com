@@ -42,8 +42,8 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
                 <ul class="dropdown-menu">
-                    @foreach($categries as $category)
-                    <a href=""><li class='Active'>{{$category->name}}</li></a>
+                    @foreach($categories as $category)
+                    <a href="/Courses-by-category/{{$category->id}}"><li class='Active'>{{$category->name}}</li></a>
                     @endforeach
                 </ul>
             </li>
@@ -85,12 +85,16 @@
       </div>
       <div class='side-bar-option'>
         <ol>
+        <a href="/DashBoard">
           <li>
-            profile
+            Change name
           </li>
+          </a>
           <a href="/DashBoard/Enrollment">
           <li>
+         
            Enrolment
+          
           </li>
           </a>
           <li>

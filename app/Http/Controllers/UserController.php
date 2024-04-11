@@ -60,7 +60,7 @@ class UserController extends Controller
      * login section  
      */
     public function login(Request $request)
-{
+    {
     $request->validate
     ([
         'name' => ['required'],
@@ -102,6 +102,7 @@ class UserController extends Controller
     }
     public function Return_DashBoard()
     {
+        
         $user_session=session('name');
         $user=User::where('name',$user_session)->first();
         $trainer=trainer::where('name',$user_session)->first();
@@ -115,7 +116,7 @@ class UserController extends Controller
                 return view('DashBoard')->with('choseen',$trainer)
                                         ->with('state',$state)
                                         ->with('hidden',$hidden)
-                                        ->with('categries',$categries);
+                                        ->with('categories',$categries);
             }elseif($trainer==null)
             {
                 $state='user';
@@ -123,9 +124,10 @@ class UserController extends Controller
                 return view('DashBoard')->with('choseen',$user)
                                         ->with('state',$state)
                                         ->with('hidden',$hidden)
-                                        ->with('categries',$categries);
+                                        ->with('categories',$categries);
             }
         }
+       
         else
         {
             return 'please login first';
@@ -137,7 +139,7 @@ class UserController extends Controller
     public function Return_Enrollment()
     {
         $user = User::where('name', session('name'))->first();
-
+        $categories=category::all();
         $chosen;
         $state;
         if ($user)
@@ -154,7 +156,8 @@ class UserController extends Controller
                                              ->with('choseen', $chosen)
                                                ->with('state', $state)
                                                ->with('user',$user)
-                                               ->with('trainer_name',$trainer_name);
+                                               ->with('trainer_name',$trainer_name)
+                                               ->with('categories',$categories);
         }
         else if(!$user)
         {
@@ -172,7 +175,8 @@ class UserController extends Controller
                                                  ->with('choseen', $chosen)
                                                    ->with('state', $state)
                                                    ->with('user',$user)
-                                                   ->with('trainer_name',$trainer_name);
+                                                   ->with('trainer_name',$trainer_name)
+                                                   ->with('categories',$categories);
            
         }
 

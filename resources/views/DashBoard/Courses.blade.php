@@ -32,28 +32,35 @@
     <title>DashBoard</title>
 </head>
 <body>
-  <header>
+<header>
     <nav>
         <ul>
             <li> 
-               <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search for a course or trainer">
-                 <div class="input-group-append">
-                  <button class="btn btn-secondary" type="button">
-                    <i class="fa fa-search"></i>
-                     </button>
-                     </div>
-                       </div>
-               </li>
-               <li>Categorries</li>
-               <li>Become a trainer</li>
-               <li>Couses</li>
-               <li>who are we?</li>
-               <li>Home</li>
-               <li class="join"><a href="/to_signup">Join now</a></li>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for a course or trainer">
+                    <div class="input-group-append">
+                        <button class="btn btn-secondary" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </li>
+            
+            <a href="/Change-state"><li>Become a trainer</li></a>
+            <a href="#"><li>Contact me</li></a>   
+            <a href="/"><li >Home</li></a>
+            <a href="/DashBoard"><li class='Active'>DashBoard</li></a>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
+                <ul class="dropdown-menu">
+                    @foreach($categories as $category)
+                    <a href="/Courses-by-category/{{$category->id}}"><li class='Active'>{{$category->name}}</li></a>
+                    @endforeach
+                </ul>
+            </li>
         </ul>
     </nav>
-  </header>
+</header>
 
 <section class='courses'>
   <div class='courses-option'>
@@ -105,28 +112,37 @@
         Hi,{{$trainer->name}}
      </div>
      <div class='info-state'>
-        state:trainer
+        state: trainer
         <br>
-        <button class='mubutton'> Preview account</button>
+       <a href="/DashBoard/user-profile/{{$trainer->id}}"><button class='mubutton'> Preview account</button></a> 
       </div>
       <div class='side-bar-option'>
         <ol>
+        <a href="/DashBoard">
           <li>
-            profile
+            Change name
           </li>
+          </a>
+          <a href="/DashBoard/Enrollment">
+          <li>
          
-          <li>
            Enrolment
+          
           </li>
+          </a>
           <li>
             Messging
           </li>
-          <li>
-            Couses
+          
+        <a href="/DashBoard/Courses">
+            <li >
+            Courses
           </li>
+        </a>
         </ol>
       </div>
  </div>
-
 </body>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
 </html>

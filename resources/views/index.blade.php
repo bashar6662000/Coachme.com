@@ -26,12 +26,13 @@
 <header>
     <nav>
         <ul>
+
             <li> 
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Search for a course or trainer">
+                    <input type="text" name='keyword' class="form-control" placeholder="Search for a course or trainer">
                     <div class="input-group-append">
                         <button class="btn btn-secondary" type="button">
-                            <i class="fa fa-search"></i>
+                          <a href="/search">  <i class="fa fa-search"></i></a>
                         </button>
                     </div>
                 </div>
@@ -41,14 +42,24 @@
             <a href="#"><li>Contact me</li></a>   
             <a href="/"><li class='Active'>Home</li></a>
             <a href="/DashBoard"><li>DashBoard</li></a>
+
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
                 <ul class="dropdown-menu">
                     @foreach($categories as $category)
-                    <a href=""><li class='Active'>{{$category->name}}</li></a>
+                    <a href="/Courses-by-category/{{$category->id}}"><li class='Active'>{{$category->name}}</li></a>
                     @endforeach
                 </ul>
             </li>
+            
+            <li class='join'>
+                <a href="{{$rout}}">
+                      <button >
+                          {{$text}}
+                      </button>
+                </a>
+            </li>
+
         </ul>
     </nav>
 </header>

@@ -94,11 +94,13 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
-            'expire' => 60,
-            'throttle' => 60,
+            'expire' => 60, /**after one hour the token will expire */
+            'throttle' => 120, /**user should wait too minutes to generate a new password */
         ],
     ],
-
+    /**
+     * here i can add anthoer one to the trainer model 
+     */
     /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout
@@ -109,6 +111,8 @@ return [
     | confirmation screen. By default, the timeout lasts for three hours.
     |
     */
+
+    /**by second */
 
     'password_timeout' => 10800,
 

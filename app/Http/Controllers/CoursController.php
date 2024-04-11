@@ -107,16 +107,16 @@ class CoursController extends Controller
         $user=user::where('name',session('name'))->first();
        
         $trainer_controller=app(trainerController::class);
-        $trainer_corse=DB::table('trainer_course')->where('course_id',$course->id)->where('is_creator',true)->first();
-
-        $trainer=$trainer_controller->trainer_byID($trainer_corse->trainer_id);
+        $trainer_course=DB::table('trainer_course')->where('course_id',$course->id)->where('is_creator',true)->first();
+        
+        $trainer=$trainer_controller->trainer_byID($trainer_course->trainer_id);
         $trainer_session=trainer::where('name',session('name'))->first();
         $state;
 
         $currentRoute = $request->url();
         session(['current_route' => $currentRoute]);
 
-        if(session('name')==null)
+        if(session('name')==null) // if there is no user
         {
             $hidden='';
             $state='user';
@@ -129,23 +129,24 @@ class CoursController extends Controller
         }
         else
         {
-            if($user==null)
-         {
-            if($trainer_corse->trainer_id ==$trainer_session->id)
+          if($trainer_session) // if its trainer
+          {
+            if($trainer_course->trainer_id==$trainer_session->id)
             {
                
                 $hidden='hidden';
                 $state='trainer';
-               
+              
                 return view('course_Detail')->with('Course',$course)
                                             ->with('state',$state)
                                             ->with('trainer_name',$trainer)
                                             ->with('hidden',$hidden)
                                             ->with('categories',$categories);
             }
-            else if($trainer_corse->trainer_id !=$trainer_session->id)
+            else if($trainer_course->trainer_id !=$trainer_session->id)
             {
                 $hidden='visible';
+                
                 $state='trainer';
                 return view('course_Detail')->with('Course',$course)
                                             ->with('state',$state)
@@ -153,8 +154,8 @@ class CoursController extends Controller
                                             ->with('hidden',$hidden)
                                             ->with('categories',$categories);
             }
-            else
-            {
+            else 
+            { 
                 $hidden='error';
                 $state='trainer';
                 return view('course_Detail')->with('Course',$course)
@@ -164,7 +165,7 @@ class CoursController extends Controller
                                             ->with('categories',$categories);
             } 
          }
-        else
+        else //if user
          {
            
                 $hidden='';
@@ -176,7 +177,9 @@ class CoursController extends Controller
                                             ->with('categories',$categories);
                                            
          }
+       
         }
+       
     }
 
     public function return_course_data_ToAdmin_page()
@@ -188,7 +191,7 @@ class CoursController extends Controller
     public function return_create_Course()
     {
         $categories= category::all();
-        return view('CreateCourse')->with('categories',$categories);
+        return view('DashBoard.CreateCourse')->with('categories',$categories);
     }
 
     public function delete_Course_DashBoard($id)
@@ -309,10 +312,34 @@ public function update(REQUEST $request ,$id)
        $trainer=trainer::findOrFail($id);
        $trainer_name=$trainer->name;
        $courses=$trainer->courses;
-      
+       $categories=category::all();
         return view('trainer_courses')->with('courses',$courses)
-                                     ->with('name',$trainer_name);
+                                     ->with('name',$trainer_name)
+                                     ->with('categories',$categories);
        
        
+   }
+   public function Courese_by_category($id)
+   {
+    $courses=cours::where('category_id',$id)->get();
+    $cat=category::where('id',$id)->first();
+    $categories=category::all();
+    return view('courses_by_category')
+    ->with('courses',$courses)
+    ->with('categories',$categories)
+    ->with('cat',$cat);
+                                      
+   }
+   public function search(Request $request)
+   {
+    $keyword = $request->input('keyword');
+    
+    $categories=category::all();
+
+    $trainers = Trainer::where('name', 'like', "%$keyword%")->get();
+    
+    $Courses = Cours::where('name', 'like', "%$keyword%")->get();
+    
+    return view('SearchResult', compact('trainers', 'Courses','categories'));
    }
 }
